@@ -1,16 +1,35 @@
-import { createContext, useState } from "react";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import "./App.css";
-import Child from "./Componenets/Child";
-export const AppContext = createContext(null);
+import Cart from "./Componenets/Cart/Cart";
+import Products from "./Componenets/Products/Products";
+import Main from "./layout/Main";
+
 function App() {
-  const [userName, setUserName] = useState("Rokib");
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Main />,
+      children: [
+        {
+          path: "/",
+          element: <Products />,
+          loader: async () => {
+            const res = await fetch(`data.json`);
+            const data = await res.json();
+            return data;
+          },
+        },
+        {
+          path: "/cart",
+          element: <Cart />,
+        },
+      ],
+    },
+  ]);
   return (
-    <AppContext.Provider value={{ setUserName }}>
-      <div className="App">
-        {userName}
-        <Child />
-      </div>
-    </AppContext.Provider>
+    <div className="App">
+      <RouterProvider router={router} />
+    </div>
   );
 }
 
